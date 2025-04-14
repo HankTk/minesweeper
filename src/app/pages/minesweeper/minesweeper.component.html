@@ -1,0 +1,65 @@
+<div class="baseContainer"
+     [style.width]="tableWidth"
+     [style.height]="tableHeight">
+
+  <div class="controlArea">
+
+    <!-- New Game -->
+    <div class="controlAreaLeft">
+      <button type="button" class="btn btn-outline-secondary btn-sm"
+              style="width: 30px; height: 30px;"
+              (click)="onClickNewGame()"
+              [ngClass]="stateClass">
+      </button>
+    </div>
+
+    <!-- Center Area -->
+    <div class="controlAreaCenter">
+      <!--
+      <input [(ngModel)]="tableSize" placeholder="Square size"
+             type="number" name="numSize" min="5" max="30"
+             style="height: 28px; background-color: #EAEAEA; margin: 0px 5px 0px 0px;">
+      &lt;!&ndash; mine &ndash;&gt;
+      <input [(ngModel)]="numberOfMines"  placeholder="Mining number"
+             type="number" name="numMine" min="1" max="30"
+             style="height: 28px; background-color: #EAEAEA; margin: 0px 5px 0px 0px;">
+      -->
+      <!-- Counter -->
+      <app-counter #counter style="margin-right: 10px;"></app-counter>
+
+      <!-- Timer -->
+      <app-timer #timer></app-timer>
+
+    </div>
+
+    <!-- Right Area -->
+    <div class="controlAreaRight">
+      <!-- Opton Dialog -->
+      <app-options
+        [inputTableSize]="tableSize"
+        (outputTableSize)="tableSize = $event"
+        [inputNumberOfMines]="numberOfMines"
+        (outputNumberOfMines)="numberOfMines = $event"
+        (onSaveOptions)="onSaveOptions($event)">
+      </app-options>
+
+    </div>
+
+  </div>
+
+  <div class="tableArea">
+    <table class="mainTable">
+      <tr *ngFor="let rtile of tilesMatrix; let irow = index">
+        <td *ngFor="let tile of rtile; let icol = index">
+          <app-tile
+            [tile]="tile"
+            id="tile-{{tile.index}}"
+            (onOpened)="onOpened($event)"
+            (onFlagged)="onFlagged($event)">
+          </app-tile>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+</div>

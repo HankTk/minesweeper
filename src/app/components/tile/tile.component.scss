@@ -1,0 +1,57 @@
+.tile {
+  /*
+  border: 1px solid #888;
+  */
+  position: absolute;
+  text-align: center;
+  font-size: 8px;
+
+  width: 24px;
+  height: 24px;
+  background-color: #EEEEEE;
+}
+
+.blank {
+  background-image: url("../../../assets/images/blank.gif");
+}
+
+.open0 {
+  background-image: url("../../../assets/images/open0.gif");
+}
+
+.mine {
+  background-image: url("../../../assets/images/bombrevealed.gif");
+}
+
+.bombdeath {
+  background-image: url("../../../assets/images/bombdeath.gif");
+}
+
+.bombflagged {
+  background-image: url("../../../assets/images/bombflagged.gif");
+}
+
+.open1 {
+  background-image: url("../../../assets/images/open1.gif");
+}
+.open2 {
+  background-image: url("../../../assets/images/open2.gif");
+}
+.open3 {
+  background-image: url("../../../assets/images/open3.gif");
+}
+.open4 {
+  background-image: url("../../../assets/images/open4.gif");
+}
+.open5 {
+  background-image: url("../../../assets/images/open5.gif");
+}
+.open6 {
+  background-image: url("../../../assets/images/open6.gif");
+}
+.open7 {
+  background-image: url("../../../assets/images/open7.gif");
+}
+.open8 {
+  background-image: url("../../../assets/images/open8.gif");
+}
