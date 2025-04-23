@@ -69,15 +69,130 @@ The built files will be generated in the `dist/` directory.
 minesweeper/
 ├── src/
 │   ├── app/
-│   │   ├── components/     # Reusable components
-│   │   ├── pages/         # Page components
-│   │   │   └── minesweeper/  # Minesweeper game
-│   │   ├── services/      # Services
-│   │   ├── app.component.ts
-│   │   ├── app.config.ts
-│   │   └── app.routes.ts
-│   ├── assets/            # Static assets
-│   └── styles.scss        # Global styles
+│   │   ├── components/           # Reusable components
+│   │   │   ├── tile/            # Individual game tile
+│   │   │   ├── timer/           # Game timer display
+│   │   │   ├── counter/         # Mine counter display
+│   │   │   ├── options/         # Game options dialog
+│   │   │   └── panel/           # Generic panel component
+│   │   ├── pages/               # Page components
+│   │   │   ├── minesweeper/     # Main game page
+│   │   │   ├── menu/            # Main menu page
+│   │   │   ├── settings/        # Game settings page
+│   │   │   └── high-scores/     # High scores page
+│   │   ├── services/            # Services
+│   │   │   ├── game.service.ts  # Game state management
+│   │   │   ├── storage.service.ts # High scores storage
+│   │   │   └── messageEvent.service.ts # Event communication
+│   │   ├── app.component.ts     # Root component
+│   │   ├── app.config.ts        # Application configuration
+│   │   └── app.routes.ts        # Routing configuration
+│   ├── assets/                  # Static assets
+│   │   └── images/             # Game images
+│   └── styles.scss             # Global styles
+```
+
+## Class Diagram
+
+```mermaid
+classDiagram
+    class MinesweeperComponent {
+        +tilesMatrix: Tile[][]
+        +tilesArray: Tile[]
+        +tableSize: number
+        +numberOfMines: number
+        +initialize()
+        +onClickNewGame()
+        +checkHasWon()
+        +checkHasLose()
+    }
+
+    class MenuComponent {
+        +routerLink: string[]
+    }
+
+    class SettingsComponent {
+        +difficulty: string
+        +boardSize: number
+        +numberOfMines: number
+        +saveSettings()
+    }
+
+    class HighScoresComponent {
+        +displayedColumns: string[]
+        +beginnerScores: HighScore[]
+        +intermediateScores: HighScore[]
+        +expertScores: HighScore[]
+    }
+
+    class TileComponent {
+        +tile: Tile
+        +opened: EventEmitter
+        +flagged: EventEmitter
+        +onClick()
+        +onRightClick()
+        +setState()
+        +updateState()
+    }
+
+    class GameService {
+        -gameStateSubject: BehaviorSubject
+        +gameState$: Observable
+        +updateSettings()
+        +startNewGame()
+        +updateTile()
+        +updateTime()
+        +updateFlagsRemaining()
+        +setGameOver()
+    }
+
+    class TimerComponent {
+        +start()
+        +stop()
+        +reset()
+        -countUp()
+        -updateCounter()
+    }
+
+    class CounterComponent {
+        +reset()
+        +setNumber()
+        +countUp()
+        +countDown()
+        -updateCounter()
+    }
+
+    class OptionsComponent {
+        +inputTableSize: number
+        +inputNumberOfMines: number
+        +outputTableSize: EventEmitter
+        +outputNumberOfMines: EventEmitter
+        +saveOptions: EventEmitter
+        +open()
+        +onSubmit()
+    }
+
+    class MessageEventService {
+        +varSubject: Subject
+    }
+
+    class StorageService {
+        +saveHighScore()
+        +getHighScores()
+    }
+
+    MinesweeperComponent --> GameService : uses
+    MinesweeperComponent --> TimerComponent : contains
+    MinesweeperComponent --> CounterComponent : contains
+    MinesweeperComponent --> OptionsComponent : contains
+    MinesweeperComponent --> TileComponent : contains
+    TileComponent --> MessageEventService : uses
+    GameService --> StorageService : uses
+    MenuComponent --> RouterModule : uses
+    SettingsComponent --> RouterModule : uses
+    HighScoresComponent --> RouterModule : uses
+    HighScoresComponent --> StorageService : uses
+    SettingsComponent --> GameService : uses
 ```
 
 ## Available Scripts
