@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, Output, EventEmitter } from '@angular/core';
 import { TileComponent } from '../../components/tile/tile.component';
 import { MessageEventService } from '../../services/messageEvent.service';
 import { TimerComponent } from '../../components/timer/timer.component';
@@ -41,6 +41,14 @@ export class MinesweeperComponent implements OnInit
   @ViewChild('timer', { static: true }) timer!: TimerComponent;
   @ViewChild('counter', { static: true }) counter!: CounterComponent;
 
+  @Input() inputTableSize!: number;
+  @Output() outputTableSize = new EventEmitter<number>();
+
+  @Input() inputNumberOfMines!: number;
+  @Output() outputNumberOfMines = new EventEmitter<number>();
+
+  @Output() saveOptions = new EventEmitter<boolean>();
+
   // Table Size
   public tableSize = 9;
   public numberOfMines = 10;
@@ -78,9 +86,7 @@ export class MinesweeperComponent implements OnInit
    */
   ngOnInit()
   {
-
       const self = this;
-
       // Initialize
       self.initialize();
   }
@@ -92,7 +98,6 @@ export class MinesweeperComponent implements OnInit
   onClickNewGame()
   {
       const self = this;
-
       // Initialize
       self.initialize();
   }
@@ -103,20 +108,14 @@ export class MinesweeperComponent implements OnInit
    */
   initialize()
   {
-
       const self = this;
-
       self.stateClass = 'facesmile';
-
       // Initialize
       self.resetTilesTable();
-
       // Create Tiles
       self.createTilesTable();
-
       // Add Mines
       self.addMines();
-
       // Calculate Mine Numbers
       self.calculateAllNumbers();
   }
@@ -128,39 +127,41 @@ export class MinesweeperComponent implements OnInit
   resetTilesTable()
   {
       const self = this;
-
       // Table size
       self.tableWidth = (this.tableSize * 24) + 'px';
       self.tableHeight = (this.tableSize * 24) + 'px';
-
       // Initialize message area
       self.message = '';
       self.tilesMatrix = [];
       self.tilesArray = [];
-
       // Counter Reset/Start
       self.counter.reset();
-      /*
-    self.counter.setNumber(this.numberOfMines);
-    */
-
       // Timer Reset/Start
       self.timer.reset();
       self.timer.stop();
       self.timerStarted = false;
-
       // Set Window Size
+      self.updateWindowSize();
+  }
+
+  /**
+   * updateWindowSize
+   * 
+   */
+  private updateWindowSize()
+  {
       try
       {
           const win = window.electronAPI?.getBrowserWindow();
           if (win)
           {
+              // Calculate window size based on tile size
+              const windowWidth = (this.tableSize * 24) + 4;
+              const windowHeight = (this.tableSize * 24) + 92;
+              // Set window bounds
               win.setBounds({
-                  // x: 300, y: 200,
-                  // width: (this.tableSize * 24) + 74,
-                  // height: (this.tableSize * 24) + 118,
-                  width: (this.tableSize * 24) + 4,
-                  height: (this.tableSize * 24) + 92,
+                  width: windowWidth,
+                  height: windowHeight,
               });
           }
       }
@@ -488,8 +489,27 @@ export class MinesweeperComponent implements OnInit
   onSaveOptions(event: any)
   {
       const self = this;
+      // Update window size immediately
+      self.updateWindowSize();
       // Initialize
       self.initialize();
+  }
+
+  /**
+   * onTableSizeChange
+   * 
+   * @param newSize 
+   */
+  onTableSizeChange(newSize: number)
+  {
+      this.tableSize = newSize;
+      // Update table dimensions
+      this.tableWidth = (this.tableSize * 24) + 'px';
+      this.tableHeight = (this.tableSize * 24) + 'px';
+      // Update window size
+      this.updateWindowSize();
+      // Reinitialize the game
+      this.initialize();
   }
 
 }

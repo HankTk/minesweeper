@@ -37,7 +37,7 @@
       <!-- Opton Dialog -->
       <app-options
         [inputTableSize]="tableSize"
-        (outputTableSize)="tableSize = $event"
+        (outputTableSize)="onTableSizeChange($event)"
         [inputNumberOfMines]="numberOfMines"
         (outputNumberOfMines)="numberOfMines = $event"
         (onSaveOptions)="onSaveOptions($event)">

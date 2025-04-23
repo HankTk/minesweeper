@@ -68,18 +68,11 @@
 
         <!-- Dialog Footer -->
         <div class="modal-footer" style="border: none!important; padding: 0px!important;">
-<!--
-          <button
-            name="btnSave" type="button"
-            class="btn btn-sm btn-secondary"
-            [disabled]="form.invalid || selectedCategory || selectedSeverities"
-            (click)="c(form)">Save</button>
--->
           <button
             name="btnSave" type="button"
             class="btn btn-sm btn-secondary"
             [disabled]="form.invalid"
-            (click)="c(form)">Save</button>
+            (click)="onSave(form, c)">Save</button>
           <button
             name="btnClose" type="button"
             class="btn btn-sm btn-secondary"

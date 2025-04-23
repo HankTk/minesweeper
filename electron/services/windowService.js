@@ -13,6 +13,7 @@ class WindowService {
       width: WINDOW.WIDTH,
       height: WINDOW.HEIGHT,
       maximizable: false,
+      resizable: false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: true,

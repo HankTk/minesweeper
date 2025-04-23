@@ -113,7 +113,6 @@ export class OptionsComponent implements OnInit
       });
   }
 
-
   /**
    * getDismissReason
    *
@@ -156,6 +155,32 @@ export class OptionsComponent implements OnInit
 
       // Emit Save Event
       this.saveOptions.emit(true);
+  }
+
+  /**
+   * onSave
+   * 
+   * @param form 
+   * @param close 
+   */
+  onSave(form: any, close: any)
+  {
+      if (form.invalid)
+      {
+          return;
+      }
+
+      // Table Size
+      this.outputTableSize.emit(this.inputTableSize);
+
+      // Number of Mines
+      this.outputNumberOfMines.emit(this.inputNumberOfMines);
+
+      // Emit Save Event
+      this.saveOptions.emit(true);
+
+      // Close the dialog
+      close(form);
   }
 
 }
