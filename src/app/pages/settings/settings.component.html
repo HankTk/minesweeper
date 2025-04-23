@@ -1,0 +1,37 @@
+<div class="settings-container">
+  <mat-card class="settings-card">
+    <mat-card-header>
+      <mat-card-title>Game Settings</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form class="settings-form">
+        <mat-form-field>
+          <mat-label>Difficulty</mat-label>
+          <mat-select [(ngModel)]="difficulty" name="difficulty">
+            <mat-option value="beginner">Beginner</mat-option>
+            <mat-option value="intermediate">Intermediate</mat-option>
+            <mat-option value="expert">Expert</mat-option>
+            <mat-option value="custom">Custom</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div *ngIf="difficulty === 'custom'" class="custom-settings">
+          <mat-form-field>
+            <mat-label>Board Size</mat-label>
+            <input matInput type="number" [(ngModel)]="boardSize" name="boardSize" min="5" max="30">
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Number of Mines</mat-label>
+            <input matInput type="number" [(ngModel)]="numberOfMines" name="numberOfMines" min="1" [max]="maxMines">
+          </mat-form-field>
+        </div>
+
+        <div class="button-container">
+          <button mat-raised-button color="primary" (click)="saveSettings()">Save Settings</button>
+          <button mat-button routerLink="/menu">Back to Menu</button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div> 

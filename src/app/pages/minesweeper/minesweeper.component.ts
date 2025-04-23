@@ -211,18 +211,27 @@ export class MinesweeperComponent implements OnInit
   addMines()
   {
       const self = this;
-      for (let i = 0; i < self.numberOfMines; i++)
+      const totalCells = this.tableSize * this.tableSize;
+      
+      // Create an array of all possible positions
+      const positions: number[] = [];
+      for (let i = 0; i < totalCells; i++) 
       {
-          let isAssigned = false;
-          while (!isAssigned)
-          {
-              const ix = Math.floor(Math.random() * (this.tableSize * this.tableSize  - 1)) + 1;
-              if (!self.tilesArray[ix].hasMine)
-              {
-                  self.tilesArray[ix].hasMine = true;
-                  isAssigned = true;
-              }
-          }
+          positions.push(i);
+      }
+      
+      // Shuffle the positions array
+      for (let i = positions.length - 1; i > 0; i--) 
+      {
+          const j = Math.floor(Math.random() * (i + 1));
+          [positions[i], positions[j]] = [positions[j], positions[i]];
+      }
+      
+      // Place mines in the first numberOfMines positions
+      for (let i = 0; i < this.numberOfMines; i++) 
+      {
+          const position = positions[i];
+          self.tilesArray[position].hasMine = true;
       }
   }
 
@@ -243,14 +252,15 @@ export class MinesweeperComponent implements OnInit
   }
 
   /**
-   * getSlots
+   * calculateNumber
    *
    */
-  getSlots(position: number): number[]
+  calculateNumber(ix: number)
   {
-      const row = Math.floor(position / this.tableSize);
-      const col = position % this.tableSize;
-      const slots: number[] = [];
+      const self = this;
+      const row = Math.floor(ix / this.tableSize);
+      const col = ix % this.tableSize;
+      let count = 0;
 
       // Check all 8 adjacent positions
       for (let i = -1; i <= 1; i++) 
@@ -259,8 +269,8 @@ export class MinesweeperComponent implements OnInit
           {
               if (i === 0 && j === 0) 
               {
-                  continue;
-              } // Skip the current position
+                  continue; // Skip the current position
+              }
               
               const newRow = row + i;
               const newCol = col + j;
@@ -269,50 +279,15 @@ export class MinesweeperComponent implements OnInit
               if (newRow >= 0 && newRow < this.tableSize && 
                   newCol >= 0 && newCol < this.tableSize) 
               {
-                  slots.push(newRow * this.tableSize + newCol);
+                  const position = newRow * this.tableSize + newCol;
+                  if (self.tilesArray[position].hasMine) 
+                  {
+                      count++;
+                  }
               }
           }
       }
-      return slots;
-  }
-
-  /**
-   * calculateNumber
-   *
-   */
-  calculateNumber(ix: number)
-  {
-      const self = this;
-      const slot = self.getSlots(ix);
-
-      // Calculate count
-      let count = 0;
-      for (let i = 0; i < slot.length; i++)
-      {
-          if (self.calculateSlot(ix, slot[i]))
-          {
-              count++;
-          }
-      }
       return count;
-  }
-
-  /**
-   * calculateSlot
-   *
-   */
-  calculateSlot(ix: number, slot: number)
-  {
-      const self = this;
-      const min = 0, max = (this.tableSize * this.tableSize  - 1);
-      if ( ((ix + (slot)) >= min) && ((ix + (slot)) <= max))
-      {
-          if ((self.tilesArray[ix + (slot)]).hasMine)
-          {
-              return true;
-          }
-      }
-      return false;
   }
 
   /**
@@ -344,8 +319,11 @@ export class MinesweeperComponent implements OnInit
           return;
       }
 
-      // Check adjacent squares
-      self.checkAdjacentSquares(event);
+      // Only check adjacent squares if the clicked tile is blank (mineCount === 0)
+      if (event.mineCount === 0)
+      {
+          self.checkAdjacentSquares(event);
+      }
   }
 
   /**
@@ -453,32 +431,50 @@ export class MinesweeperComponent implements OnInit
   checkAdjacentSquares(event: { index: number })
   {
       const self = this;
-      const slots = self.getSlots(event.index);
+      const row = Math.floor(event.index / this.tableSize);
+      const col = event.index % this.tableSize;
 
-      for (let i = 0; i < slots.length; i++)
+      // Check all 8 adjacent positions
+      for (let i = -1; i <= 1; i++) 
       {
-          const sx = slots[i];
-          const tile = self.tilesArray[sx];
-          
-          // Only open if the tile is blank and not a mine
-          if (tile.blank && !tile.hasMine) 
+          for (let j = -1; j <= 1; j++) 
           {
-              // Open the tile
-              tile.blank = false;
-              
-              // If the tile is a blank tile (mineCount === 0), recursively open adjacent tiles
-              if (tile.mineCount === 0) 
+              if (i === 0 && j === 0) 
               {
-                  tile.stateClass = 'open0';
-                  tile.event = 'open0';
-                  // Recursively open adjacent tiles
-                  self.checkAdjacentSquares({ index: sx });
+                  continue; // Skip the current position
               }
-              // If the tile has a number, just show the number
-              else 
+              
+              const newRow = row + i;
+              const newCol = col + j;
+              
+              // Check if the new position is within bounds
+              if (newRow >= 0 && newRow < this.tableSize && 
+                  newCol >= 0 && newCol < this.tableSize) 
               {
-                  tile.stateClass = 'open' + tile.mineCount;
-                  tile.event = 'number';
+                  const position = newRow * this.tableSize + newCol;
+                  const tile = self.tilesArray[position];
+                  
+                  // Only open if the tile is blank and not a mine
+                  if (tile.blank && !tile.hasMine) 
+                  {
+                      // Open the tile
+                      tile.blank = false;
+                      
+                      // If the tile is a blank tile (mineCount === 0), recursively open adjacent tiles
+                      if (tile.mineCount === 0) 
+                      {
+                          tile.stateClass = 'open0';
+                          tile.event = 'open0';
+                          // Recursively open adjacent tiles
+                          self.checkAdjacentSquares({ index: position });
+                      }
+                      // If the tile has a number, just show the number
+                      else 
+                      {
+                          tile.stateClass = 'open' + tile.mineCount;
+                          tile.event = 'number';
+                      }
+                  }
               }
           }
       }

@@ -1,0 +1,95 @@
+<div class="high-scores-container">
+  <mat-card class="high-scores-card">
+    <mat-card-header>
+      <mat-card-title>High Scores</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-tab-group>
+        <mat-tab label="Beginner">
+          <table mat-table [dataSource]="beginnerScores" class="scores-table">
+            <ng-container matColumnDef="rank">
+              <th mat-header-cell *matHeaderCellDef>Rank</th>
+              <td mat-cell *matCellDef="let element; let i = index">{{i + 1}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="player">
+              <th mat-header-cell *matHeaderCellDef>Player</th>
+              <td mat-cell *matCellDef="let element">{{element.player}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="time">
+              <th mat-header-cell *matHeaderCellDef>Time</th>
+              <td mat-cell *matCellDef="let element">{{element.time}}s</td>
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Date</th>
+              <td mat-cell *matCellDef="let element">{{element.date | date}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </mat-tab>
+
+        <mat-tab label="Intermediate">
+          <table mat-table [dataSource]="intermediateScores" class="scores-table">
+            <ng-container matColumnDef="rank">
+              <th mat-header-cell *matHeaderCellDef>Rank</th>
+              <td mat-cell *matCellDef="let element; let i = index">{{i + 1}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="player">
+              <th mat-header-cell *matHeaderCellDef>Player</th>
+              <td mat-cell *matCellDef="let element">{{element.player}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="time">
+              <th mat-header-cell *matHeaderCellDef>Time</th>
+              <td mat-cell *matCellDef="let element">{{element.time}}s</td>
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Date</th>
+              <td mat-cell *matCellDef="let element">{{element.date | date}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </mat-tab>
+
+        <mat-tab label="Expert">
+          <table mat-table [dataSource]="expertScores" class="scores-table">
+            <ng-container matColumnDef="rank">
+              <th mat-header-cell *matHeaderCellDef>Rank</th>
+              <td mat-cell *matCellDef="let element; let i = index">{{i + 1}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="player">
+              <th mat-header-cell *matHeaderCellDef>Player</th>
+              <td mat-cell *matCellDef="let element">{{element.player}}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="time">
+              <th mat-header-cell *matHeaderCellDef>Time</th>
+              <td mat-cell *matCellDef="let element">{{element.time}}s</td>
+            </ng-container>
+
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Date</th>
+              <td mat-cell *matCellDef="let element">{{element.date | date}}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </mat-tab>
+      </mat-tab-group>
+
+      <div class="button-container">
+        <button mat-button routerLink="/menu">Back to Menu</button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

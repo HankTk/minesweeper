@@ -7,7 +7,7 @@ import { MinesweeperComponent } from './pages/minesweeper/minesweeper.component'
 @Component({
     selector: 'app-root',
     standalone: true,
-    imports: [CommonModule, TranslateModule, MinesweeperComponent],
+    imports: [CommonModule, TranslateModule, MinesweeperComponent, RouterOutlet],
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss'],
 })
