@@ -12,6 +12,7 @@ class WindowService {
     this.mainWindow = new BrowserWindow({
       width: WINDOW.WIDTH,
       height: WINDOW.HEIGHT,
+      maximizable: false,
       webPreferences: {
         nodeIntegration: true,
         contextIsolation: true,

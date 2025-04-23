@@ -248,26 +248,32 @@ export class MinesweeperComponent implements OnInit
    */
   getSlots(position: number): number[]
   {
-      const self = this;
-      const pseudoSlot = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-      const mapping: { [key: string]: number } = {
-          'a': 0 - this.tableSize - 1,
-          'b': 0 - this.tableSize,
-          'c': 0 - this.tableSize + 1,
-          'd':  -1,
-          'e':  +1,
-          'f': 0 + this.tableSize - 1,
-          'g': 0 + this.tableSize,
-          'h': 0 + this.tableSize + 1
-      };
-      const slot: number[] = [];
-      for (let i = 0; i < pseudoSlot.length; i++)
+      const row = Math.floor(position / this.tableSize);
+      const col = position % this.tableSize;
+      const slots: number[] = [];
+
+      // Check all 8 adjacent positions
+      for (let i = -1; i <= 1; i++) 
       {
-          const x = pseudoSlot[i];
-          const v = mapping[x];
-          slot.push(v);
+          for (let j = -1; j <= 1; j++) 
+          {
+              if (i === 0 && j === 0) 
+              {
+                  continue;
+              } // Skip the current position
+              
+              const newRow = row + i;
+              const newCol = col + j;
+              
+              // Check if the new position is within bounds
+              if (newRow >= 0 && newRow < this.tableSize && 
+                  newCol >= 0 && newCol < this.tableSize) 
+              {
+                  slots.push(newRow * this.tableSize + newCol);
+              }
+          }
       }
-      return slot;
+      return slots;
   }
 
   /**
@@ -448,30 +454,31 @@ export class MinesweeperComponent implements OnInit
   {
       const self = this;
       const slots = self.getSlots(event.index);
+
       for (let i = 0; i < slots.length; i++)
       {
-          const slotIx = slots[i];
-          const sx = event.index + slotIx;
-
-          // Check if the slot is within bounds
-          if (sx >= 0 && sx < self.tilesArray.length) 
+          const sx = slots[i];
+          const tile = self.tilesArray[sx];
+          
+          // Only open if the tile is blank and not a mine
+          if (tile.blank && !tile.hasMine) 
           {
-              const tile = self.tilesArray[sx];
-              // Only open if the tile is blank and not a mine
-              if (tile.blank && !tile.hasMine) 
+              // Open the tile
+              tile.blank = false;
+              
+              // If the tile is a blank tile (mineCount === 0), recursively open adjacent tiles
+              if (tile.mineCount === 0) 
               {
-                  // If the tile is a blank tile (mineCount === 0), open it and its adjacent tiles
-                  if (tile.mineCount === 0) 
-                  {
-                      self.messageEventService.sendEvent({name: 'around', index: sx});
-                  }
-                  // If the tile has a number, just open it
-                  else 
-                  {
-                      tile.blank = false;
-                      tile.stateClass = 'open' + tile.mineCount;
-                      tile.event = 'number';
-                  }
+                  tile.stateClass = 'open0';
+                  tile.event = 'open0';
+                  // Recursively open adjacent tiles
+                  self.checkAdjacentSquares({ index: sx });
+              }
+              // If the tile has a number, just show the number
+              else 
+              {
+                  tile.stateClass = 'open' + tile.mineCount;
+                  tile.event = 'number';
               }
           }
       }

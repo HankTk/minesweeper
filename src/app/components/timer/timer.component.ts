@@ -10,9 +10,9 @@ import { CommonModule } from '@angular/common';
 })
 export class TimerComponent implements OnInit, OnDestroy 
 {
-
     public intervalId = 0;
     private seconds = 0;
+    private isRunning = false;
 
     public message = '';
     public counterClass1 = 'number-n';
@@ -25,6 +25,7 @@ export class TimerComponent implements OnInit, OnDestroy
    */
     ngOnInit() 
     {
+        this.reset();
     }
 
     /**
@@ -42,7 +43,12 @@ export class TimerComponent implements OnInit, OnDestroy
    */
     clearTimer() 
     {
-        clearInterval(this.intervalId);
+        if (this.intervalId) 
+        {
+            clearInterval(this.intervalId);
+            this.intervalId = 0;
+        }
+        this.isRunning = false;
     }
 
     /**
@@ -51,7 +57,15 @@ export class TimerComponent implements OnInit, OnDestroy
    */
     start() 
     {
+        if (this.isRunning) 
+        {
+            return;
+        }
+        
+        this.clearTimer();
         this.seconds = 0;
+        this.updateCounter();
+        this.isRunning = true;
         this.countUp();
     }
 
@@ -71,7 +85,9 @@ export class TimerComponent implements OnInit, OnDestroy
    */
     reset() 
     {
+        this.clearTimer();
         this.seconds = 0;
+        this.updateCounter();
     }
 
     /**
