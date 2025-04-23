@@ -12,6 +12,8 @@ declare global {
   interface Window {
     electronAPI: {
       getBrowserWindow: () => any;
+      setWindowSize: (width: number, height: number) => void;
+      onWindowActivated: (callback: () => void) => void;
     }
   }
 }
@@ -78,7 +80,14 @@ export class MinesweeperComponent implements OnInit
     private elRef: ElementRef,
     private messageEventService: MessageEventService
   )
-  {}
+  {
+      // Listen for window-activated event
+      window.electronAPI?.onWindowActivated(() => 
+      {
+      // Update window size based on current tile size
+          this.updateWindowSize();
+      });
+  }
 
   /**
    * ngOnInit
@@ -89,6 +98,8 @@ export class MinesweeperComponent implements OnInit
       const self = this;
       // Initialize
       self.initialize();
+      // Set initial window size
+      self.updateWindowSize();
   }
 
   /**
@@ -118,6 +129,8 @@ export class MinesweeperComponent implements OnInit
       self.addMines();
       // Calculate Mine Numbers
       self.calculateAllNumbers();
+      // Update window size
+      self.updateWindowSize();
   }
 
   /**
@@ -152,18 +165,19 @@ export class MinesweeperComponent implements OnInit
   {
       try
       {
-          const win = window.electronAPI?.getBrowserWindow();
-          if (win)
-          {
-              // Calculate window size based on tile size
-              const windowWidth = (this.tableSize * 24) + 4;
-              const windowHeight = (this.tableSize * 24) + 92;
-              // Set window bounds
-              win.setBounds({
-                  width: windowWidth,
-                  height: windowHeight,
-              });
-          }
+          // Calculate window size based on tile size
+          const windowWidth = (this.tableSize * 24) + 4;
+          // Calculate total height:
+          // - Game board height (tableSize * 24)
+          // - Control area height (40px)
+          // - Control area padding (20px top + 5px bottom)
+          // - Table area padding (5px top + 5px bottom)
+          // - Additional space for window chrome (20px)
+          const windowHeight = (this.tableSize * 24) + 40 + 20 + 5 + 5 + 5 + 20;
+          // Set window bounds
+          window.electronAPI?.setWindowSize(windowWidth, windowHeight);
+          // Force a repaint
+          window.electronAPI?.getBrowserWindow()?.webContents?.invalidate();
       }
       catch (error)
       {
@@ -506,7 +520,7 @@ export class MinesweeperComponent implements OnInit
       // Update table dimensions
       this.tableWidth = (this.tableSize * 24) + 'px';
       this.tableHeight = (this.tableSize * 24) + 'px';
-      // Update window size
+      // Update window size immediately
       this.updateWindowSize();
       // Reinitialize the game
       this.initialize();

@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   WINDOW: {
     WIDTH: 220,
-    HEIGHT: 280,
+    HEIGHT: 310,
     DEV_SERVER_URL: 'http://localhost:4200',
     DEV_SERVER_TIMEOUT: 2000,
     PROD_INDEX_PATH: path.join(__dirname, '..', '..', 'dist', 'file-explorer', 'index.html')

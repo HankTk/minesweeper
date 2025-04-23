@@ -25,5 +25,20 @@ contextBridge.exposeInMainWorld('electronAPI', {
   deleteItem: (path) => ipcRenderer.invoke('delete-item', path),
   readImageFile: (path, highQuality) => ipcRenderer.invoke('read-image-file', path, highQuality),
   readRawFile: (path) => ipcRenderer.invoke('read-raw-file', path),
-  getBrowserWindow: () => BrowserWindow.getFocusedWindow()
+  getBrowserWindow: () => BrowserWindow.getFocusedWindow(),
+  setWindowSize: (width, height) => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+      win.setBounds({
+        width: width,
+        height: height,
+        useContentSize: true
+      });
+      // Force a repaint
+      win.webContents.invalidate();
+    }
+  },
+  onWindowActivated: (callback) => {
+    ipcRenderer.on('window-activated', callback);
+  }
 }); 

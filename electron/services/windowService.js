@@ -9,6 +9,18 @@ class WindowService {
   }
 
   createWindow() {
+    // If a window already exists, try to close it safely
+    if (this.mainWindow) {
+      try {
+        if (!this.mainWindow.isDestroyed()) {
+          this.mainWindow.close();
+        }
+      } catch (error) {
+        console.error('Error closing existing window:', error);
+      }
+      this.mainWindow = null;
+    }
+
     this.mainWindow = new BrowserWindow({
       width: WINDOW.WIDTH,
       height: WINDOW.HEIGHT,
@@ -62,6 +74,24 @@ class WindowService {
 
   getMainWindow() {
     return this.mainWindow;
+  }
+
+  setWindowSize(width, height) {
+    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+      this.mainWindow.setBounds({
+        width: width,
+        height: height,
+        useContentSize: true
+      });
+    }
+  }
+
+  focus() {
+    if (this.mainWindow && !this.mainWindow.isDestroyed()) {
+      this.mainWindow.focus();
+      // Let the renderer process handle the window size
+      this.mainWindow.webContents.send('window-activated');
+    }
   }
 }
 
